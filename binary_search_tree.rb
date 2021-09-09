@@ -139,6 +139,81 @@ class Tree
     array.flatten
   end
 
+  # Method for preorder traversal of the tree
+  def preorder(node = @root)
+    array = []
+    if node.left && node.right == nil
+      return node.data
+    else
+      array.push(node.data)
+      array.push(preorder(node.left)) unless node.left == nil
+      array.push(preorder(node.right)) unless node.right == nil
+    end
+    array.flatten
+  end
+
+  # Method for inorder traversal of the tree
+  def inorder(node = @root)
+    array = []
+    if node.left && node.right == nil
+      return node.data
+    else
+      array.push(inorder(node.left)) unless node.left == nil
+      array.push(node.data)
+      array.push(inorder(node.right)) unless node.right == nil
+    end
+    array.flatten
+  end
+
+  # Method for postorder traversal of the tree
+  def postorder(node = @root)
+    array = []
+    if node.left && node.right == nil
+      return node.data
+    else
+      array.push(postorder(node.left)) unless node.left == nil
+      array.push(postorder(node.right)) unless node.right == nil
+      array.push(node.data)
+    end
+    array.flatten
+  end
+
+  # Method returns the height of a given node
+  def height(node, height = 0)
+    if node.left == nil && node.right == nil
+      return height
+    else
+      left = 0
+      right = 0
+      left = height(node.left, height + 1) unless node.left == nil
+      right = height(node.right, height + 1) unless node.right == nil
+      if right == nil || left > right
+        return left
+      else
+        return right
+      end
+    end
+  end
+
+  # Method that returns a nodes depth
+  def depth(node)
+    height(@root) - height(node)
+  end
+
+  # Boolean method, returns true if the binary tree is balanced
+  def balanced?
+    if (height(@root.left) - height(root.right)).abs <= 1
+      true
+    else
+      false
+    end
+  end
+
+  # Rebalances tree
+  def rebalance
+    build_tree(level_order.sort.uniq)
+  end
+
   # Method creating a visual representation of the array, shared by another student
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
@@ -146,9 +221,26 @@ class Tree
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 end
-array = Array.new(25) { rand(1..100) }
-tree = Tree.new(array)
-tree.build_tree
-tree.pretty_print
 
-p tree.level_order
+# Function that shows some of the functions of the tree class
+def driver
+  array = Array.new(25) { rand(1..100) }
+  tree = Tree.new(array)
+  tree.build_tree
+  tree.pretty_print
+  p tree.balanced?
+  tree.insert(101)
+  tree.insert(105)
+  tree.insert(106)
+  tree.insert(109)
+  tree.pretty_print
+  p tree.balanced?
+  tree.rebalance
+  tree.pretty_print
+  p tree.balanced?
+  p tree.preorder
+  p tree.inorder
+  p tree.postorder
+end
+
+driver
